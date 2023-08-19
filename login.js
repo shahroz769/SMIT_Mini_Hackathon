@@ -12,6 +12,7 @@ import {
     getFirestore,
     doc,
     setDoc,
+    getDoc,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,15 +31,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
-        console.log("Uid ==>", uid);
-    } else {
-        console.log("User Signed Out");
-    }
-});
 
 const toggleForm = (event) => {
     let btnText = event.target;
@@ -119,6 +111,7 @@ form.addEventListener("submit", async function (event) {
             lastName: newLastName.value,
             fullName: newFirstName.value + " " + newLastName.value,
             joined: currentDate,
+            src: "https://static.thenounproject.com/png/4035889-200.png",
         });
         console.log(user);
         newFirstName.value = "";
@@ -126,8 +119,12 @@ form.addEventListener("submit", async function (event) {
         newEmail.value = "";
         newPassword.value = "";
         newConfirmPassword.value = "";
+        window.location.replace("./dashboard.html");
+        const docRef = doc(db, "users", user.uid);
+        const userdocSnap = await getDoc(docRef);
+        const userData = userdocSnap.data();
+        localStorage.setItem("userDb", JSON.stringify(userData));
     } catch (error) {
-        const errorMessage = error.message;
         console.log(error.code);
         if (error.code === "auth/email-already-in-use") {
             emailExistError.classList.remove("d-none");
@@ -141,14 +138,18 @@ const loginUser = async () => {
     let password = document.getElementById("password");
     let invalidUser = document.getElementById("invalidUser");
     signInWithEmailAndPassword(auth, email.value, password.value)
-        .then((userCredential) => {
-            // Signed in
+        .then(async (userCredential) => {
             invalidUser.classList.add("v-hidden");
             const user = userCredential.user;
             console.log(user);
-
+            const docRef = doc(db, "users", user.uid);
+            const userdocSnap = await getDoc(docRef);
+            if (userdocSnap.exists()) {
+                const userData = userdocSnap.data();
+                localStorage.setItem("userDb", JSON.stringify(userData));
+            }
             // Redirect to dashboard.html after successful login
-            window.location.href = "dashboard.html";
+            window.location.replace("./dashboard.html");
         })
         .catch((error) => {
             invalidUser.classList.remove("v-hidden");
@@ -161,5 +162,15 @@ const loginUser = async () => {
 
 let signInForm = document.getElementById("signInForm");
 signInForm.addEventListener("submit", loginUser);
-
 //End of Login
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // https://firebase.google.com/docs/reference/js/auth.user
+        localStorage.setItem("user", JSON.stringify(user));
+        const uid = user.uid;
+        console.log("Uid ==>", uid);
+    } else {
+        console.log("User Signed Out");
+    }
+});

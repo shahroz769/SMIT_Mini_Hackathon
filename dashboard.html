@@ -10,13 +10,25 @@
 </head>
 
 <body>
+    <div id="edit-window" class="w-bg">
+        <div class="w">
+            <h2>Edit Blog</h2>
+            <input id="editTitle" type="text" placeholder="Blog title" required minlength="5" maxlength="50" />
+            <textarea id="editBlog" type="text" placeholder="What is in your mind" required minlength="100"
+                maxlength="3000"></textarea>
+                <div>
+                    <button class="save-btn">Save</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
+        </div>
+    </div>
     <div class="header-parent">
         <div class="header">
             <div class="header-left">
                 <h2>Personal Blogging App</h2>
             </div>
             <div class="header-right">
-                <p id="userName">Inzamam Malik</p>
+                <a href="Profile/profileChange.html" id="userName"></a>
                 <p id="header-right-login"><a href="./allblogs.html">All Blogs</a></p>
                 <p id="header-right-login">Login</p>
                 <p id="header-right-logout">Logout</p>
@@ -31,12 +43,13 @@
 
     <div class="publish-blog-parent">
         <div class="publish-blog">
-            <div class="publish-blog-child">
+            <form id="publishBlogButton" onsubmit="return false" class="publish-blog-child">
                 <h1>Publish Blog</h1>
-                <input id="publishBlogTitle" type="text" placeholder="Blog Title">
-                <textarea id="publishBlogContent" cols="20" rows="6" placeholder="What is in your mind"></textarea>
-                <button id="publishBlogButton" class="publish-button">Publish Blog</button>
-            </div>
+                <input id="publishBlogTitle" type="text" required minlength="5" maxlength="50" placeholder="Blog Title">
+                <textarea id="publishBlogContent" cols="20" required minlength="100" maxlength="3000" rows="6"
+                    placeholder="What is in your mind"></textarea>
+                <button class="publish-button">Publish Blog</button>
+            </form>
         </div>
     </div>
 
@@ -102,7 +115,7 @@
             </div>
         </div>
     </div>
-    <script src="./app.js"  type="module"></script>    
+    <script src="./app.js" type="module"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 // LoginJS
-let uid;
 let arr = [];
+let uid;
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import {
@@ -34,37 +34,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
+let userLocal = JSON.parse(localStorage.getItem("userDb"));
+let userUIDLocal = JSON.parse(localStorage.getItem("user"));
+let userNameElem = document.getElementById("userName");
+userNameElem.textContent = userLocal.fullName;
 
 // Check if the current page is "dashboard.html"
 if (window.location.pathname === "/dashboard.html") {
+    let indexToDelete;
     // Inside the onAuthStateChanged callback
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             // User is signed in
             uid = user.uid;
             console.log("Uid ==>", uid);
-
             // Now fetch user data based on the retrieved uid
             const docRef = doc(db, "blogs", uid);
             const docSnap = await getDoc(docRef);
-
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 arr = docSnap.data().arr;
                 // Assuming 'userData.arr' is an array of blog data
                 const blogParent = document.querySelector(".blog-parent");
-
-                // Loop through each entry in the 'arr' array and create blog elements
                 userData.arr.forEach((blogData) => {
-                    const { title, fullName, date, text } = blogData;
-
+                    const { title, fullName, date, text, src } = blogData;
                     // Create a new blog element
                     const blog = document.createElement("div");
                     blog.classList.add("blog");
                     blog.innerHTML = `
                         <div class="blog-head">
                             <div class="blog-profile-image">
-                                <img src="./assets/profile.jpg" alt="Profile Picture">
+                                <img src="${src}" alt="Profile Picture">
                             </div>
                             <div class="blog-title">
                                 <h2>${title}</h2>
@@ -80,7 +80,6 @@ if (window.location.pathname === "/dashboard.html") {
                             <button class="edit-button">Edit</button>
                         </div>
                     `;
-
                     // Append the blog element to the parent container
                     blogParent.appendChild(blog);
                 });
@@ -88,10 +87,65 @@ if (window.location.pathname === "/dashboard.html") {
                 console.log("No such document!");
                 arr = [];
             }
+            let deleteButton = document.querySelectorAll(".delete-button");
+            deleteButton.forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    let c = confirm("Are you sure you want to delete this");
+                    if (c) {
+                        let title =
+                            e.target.parentNode.parentNode.querySelector(
+                                "h2"
+                            ).innerHTML;
+                        arr = arr.filter((a) => a.title !== title);
+                        const dataToSend = {
+                            arr: arr,
+                        };
+                        setDoc(doc(db, "blogs", userUIDLocal.uid), dataToSend)
+                            .then(() => {
+                                console.log(
+                                    "Document successfully written to Firestore!"
+                                );
+                                window.location.reload();
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    "Error writing document: ",
+                                    error
+                                );
+                            });
+                    }
+                });
+            });
+            let editButton = document.querySelectorAll(".edit-button");
+            editButton.forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    let ediWindow = document.getElementById("edit-window");
+                    ediWindow.style.display = "block";
+                    let title =
+                        e.target.parentNode.parentNode.querySelector(
+                            "h2"
+                        ).innerHTML;
+                    let [toEdit] = arr.filter((ae) => ae.title == title);
+                    editTitle.value = toEdit.title;
+                    editBlog.value = toEdit.text;
+                });
+            });
+            // let saveBtn = document.querySelectorAll(".save-btn");
+            // editButton.forEach((btn) => {
+            //     btn.addEventListener("click", async (e) => {
+            //         let ediWindow = document.getElementById("edit-window");
+            //         ediWindow.style.display = "block";
+            //         let title =
+            //             e.target.parentNode.parentNode.querySelector(
+            //                 "h2"
+            //             ).innerHTML;
+            //         let [toEdit] = arr.filter((ae) => ae.title == title);
+            //         editTitle.value = toEdit.title;
+            //         editBlog.value = toEdit.text;
+            //     });
+            // });
         } else {
-            // User is signed out
             console.log("User Signed Out");
-            // Redirect to allblogs.html
             window.location.href = "/allblogs.html";
         }
     });
@@ -116,14 +170,14 @@ if (window.location.pathname === "/allblogs.html") {
 
         // Loop through the array and append HTML elements for each object
         arr.forEach((item) => {
-            const { text, fullName, title, date, userId } = item;
+            const { text, fullName, title, date, userId, src } = item;
 
             // Create a template literal with the HTML structure
             const htmlTemplate = `
         <div class="all-blogs-blog">
             <div class="all-blogs-blog-head">
                 <div class="all-blogs-blog-profile-image">
-                    <img src="./assets/profile.jpg" alt="Profile Picture">
+                    <img src="${src}" alt="Profile Picture">
                 </div>
                 <div class="all-blogs-blog-title">
                     <h2>${title}</h2>
@@ -256,7 +310,9 @@ if (window.location.href.endsWith("allfromuser.html")) {
         if (docSnap.exists()) {
             const userData = docSnap.data();
             arr = userData.arr; // Assuming 'userData.arr' is an array of blog data
-            const blogsFromUser = document.querySelector(".all-blogs-from-user-child");
+            const blogsFromUser = document.querySelector(
+                ".all-blogs-from-user-child"
+            );
 
             // Loop through each entry in the 'arr' array and create blog elements
             userData.arr.forEach((blogData) => {
@@ -294,11 +350,22 @@ if (window.location.href.endsWith("allfromuser.html")) {
     }
 }
 
-
-
 // Function to publish blog
 
-window.publishBlog = function () {
+let user = JSON.parse(localStorage.getItem("user"));
+let userSrc = null;
+
+window.publishBlog = async function () {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        const userData = docSnap.data();
+        userSrc = userData.src;
+        console.log("User Data:", userData);
+    } else {
+        console.log("No such document!");
+    }
     const currentDateFormatted = getCurrentDateFormatted();
     console.log(currentDateFormatted);
     let blogTitle = document.getElementById("publishBlogTitle").value;
@@ -310,11 +377,11 @@ window.publishBlog = function () {
     blog.innerHTML = `
                         <div class="blog-head">
                             <div class="blog-profile-image">
-                                <img src="./assets/profile.jpg" alt="Profile Picture">
+                                <img src="${userSrc}" alt="Profile Picture">
                             </div>
-                            <div class="blog-title">
+                            <div class="blog-title">    
                                 <h2>${blogTitle}</h2>
-                                <p>Inzamam Malik</p>
+                                <p>${userLocal.fullName}</p>
                                 <p>${currentDateFormatted}</p>
                             </div>
                         </div>
@@ -327,12 +394,14 @@ window.publishBlog = function () {
                         </div>
     `;
     blogParent.appendChild(blog);
+
     let blogObject = {
-        fullName: "Inzamam Malik",
+        fullName: userLocal.fullName,
         date: currentDateFormatted,
         title: blogTitle,
         text: blogText,
         userId: uid,
+        src: userSrc,
     };
     arr.push(blogObject);
     console.log(arr);
@@ -340,11 +409,10 @@ window.publishBlog = function () {
     const dataToSend = {
         arr: arr,
     };
-
-    // Replace 'user.uid' with the appropriate document ID where you want to store the 'arr' array
-    setDoc(doc(db, "blogs", uid), dataToSend)
+    setDoc(doc(db, "blogs", userUIDLocal.uid), dataToSend)
         .then(() => {
             console.log("Document successfully written to Firestore!");
+            // window.location.reload();
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
@@ -356,6 +424,13 @@ window.publishBlog = function () {
 
 document
     .getElementById("publishBlogButton")
-    .addEventListener("click", function () {
+    .addEventListener("submit", function () {
         publishBlog();
     });
+
+const editWindow = () => {
+    document.getElementById("edit-window").style.display = "none";
+};
+document.querySelectorAll(".cancel-btn").forEach((btn) => {
+    btn.addEventListener("click", editWindow);
+});

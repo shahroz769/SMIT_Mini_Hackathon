@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Blogs</title>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="header-parent">
+        <div class="header">
+            <div class="header-left">
+                <h2>Personal Blogging App</h2>
+            </div>
+            <div class="header-right">
+                <p id="userName"></p>
+                <p id="header-right-login">All Blogs</p>
+                <p id="header-right-login">Login</p>
+                <p id="header-right-logout">Logout</p>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-parent">
+        <div class="dashboard">
+            <div class="dashboard-content">
+                <h1 id="greeting">Hello!</h1>
+            </div>
+        </div>
+        <div class="profile-container">
+            <div class="profile">
+                <div class="profile-img">
+                    <img class="p-img" id="userImg" src="" alt="user-profile">
+                    <label for="imageInput" class="image-upload-label">
+                        <img class="pen" id="changeImgBtn" src="./pen-fill-outline.svg" alt="pen">
+                    </label>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-name-container">
+                    <p id="userNameEdit"></p>
+                </div>
+                <div class="password-container">
+                    <h1>Password</h1>
+                    <input id="oldPass" type="password" placeholder="Old password">
+                    <input id="newPass" type="password" placeholder="New password">
+                    <input id="RepeatPass" type="password" placeholder="Repeat password">
+                    <button id="updatePassBtn">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./app.js" type="module"></script>
+
+</html>

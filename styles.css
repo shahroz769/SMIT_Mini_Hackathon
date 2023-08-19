@@ -104,7 +104,6 @@ body {
 .blog-head {
     display: flex;
     gap: 24px;
-    max-width: 568px;
 }
 
 #myBlogsMainHeading {
@@ -395,19 +394,19 @@ img {
     }
 }
 
-.allblogs-parent{
+.allblogs-parent {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 24px;
 }
 
-.all-blogs{
+.all-blogs {
     max-width: 880px;
     width: 100%;
 }
 
-.all-blogs-child{
+.all-blogs-child {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -416,7 +415,7 @@ img {
     width: 100%;
 }
 
-.all-blogs-blog{
+.all-blogs-blog {
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -425,43 +424,91 @@ img {
     width: 100%;
 }
 
-.all-blogs-blog-head{
+.all-blogs-blog-head {
     display: flex;
     gap: 24px;
-    max-width: 568px;
 }
 
-#allBlogsHeading{
+#allBlogsHeading {
     margin-bottom: 24px;
 }
 
-.all-blogs-from-user-parent{
+.all-blogs-from-user-parent {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 24px;
 }
 
-.all-blogs-from-user{
+.all-blogs-from-user {
     max-width: 880px;
     width: 100%;
 }
 
-.all-blogs-from-user-blog-head{
+.all-blogs-from-user-blog-head {
     display: flex;
     gap: 24px;
 }
 
-.all-blogs-from-user-blog{
+.all-blogs-from-user-blog {
     display: flex;
     flex-direction: column;
     gap: 18px;
     background-color: white;
 }
 
-.all-blogs-from-user-child{
+.all-blogs-from-user-child {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
+.blog-profile-image,
+.all-blogs-blog-profile-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+img {
+    width: 100%;
+}
+
+.w-bg {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #0000006b;
+    width: 100%;
+    height: 100dvh;
+}
+.w {
+    z-index: 2;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    max-width: 568px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+input,
+textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #000000;
+    outline: none;
+    border-radius: 0.25rem;
+    resize: none;
+}
+.w textarea {
+    height: 200px;
+}
