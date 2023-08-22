@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCtPWyKIRMJsfWsLmwwlsArGw9788eQ8Sg",
-    authDomain: "hackathonsmit-ba16c.firebaseapp.com",
-    projectId: "hackathonsmit-ba16c",
-    storageBucket: "hackathonsmit-ba16c.appspot.com",
-    messagingSenderId: "420550745532",
-    appId: "1:420550745532:web:772da6c2eb1e6442191fb9",
+    apiKey: "AIzaSyCa5XSrvDvKFwWNLYzvkeJkd10BUthxRQY",
+    authDomain: "smit-mini-hackathon-a3fd4.firebaseapp.com",
+    projectId: "smit-mini-hackathon-a3fd4",
+    storageBucket: "smit-mini-hackathon-a3fd4.appspot.com",
+    messagingSenderId: "575523341335",
+    appId: "1:575523341335:web:870e575db4a604dd288852",
 };
 import {
     getAuth,
