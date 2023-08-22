@@ -1,4 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCa5XSrvDvKFwWNLYzvkeJkd10BUthxRQY",
@@ -11,7 +14,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 import {
     getStorage,
     ref,
@@ -29,11 +31,13 @@ import {
 import {
     getFirestore,
     collection,
-    getDoc,
+    query,
+    where,
     getDocs,
+    updateDoc,
+    getDoc,
     addDoc,
     deleteDoc,
-    updateDoc,
     doc,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
@@ -51,42 +55,41 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 let userLocal = JSON.parse(localStorage.getItem("userDb"));
+let userLocalUid = JSON.parse(localStorage.getItem("user"));
 let userNameElem = document.getElementById("userName");
 let userNameEdit = document.getElementById("userNameEdit");
+let headerRightLogin = document.getElementById("header-right-login");
+userLocal
+    ? (headerRightLogin.style.display = "none")
+    : (headerRightLogin.style.display = "block");
 userNameEdit.textContent = userLocal.fullName;
 userName.textContent = userLocal.fullName;
 let user = JSON.parse(localStorage.getItem("user"));
 let userImg = document.getElementById("userImg");
+let loader = document.querySelector("#loader");
+
 const docRef = doc(db, "users", user.uid);
 const docSnap = await getDoc(docRef);
 if (docSnap.exists()) {
     const existingData = docSnap.data();
     userImg.src = existingData.src;
+    loader.classList.add("d-none");
 } else {
     console.log("Document does not exist.");
 }
 
 const changeProfile = async (newSrc) => {
-    const docRef = doc(db, "blogs", user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        const existingData = docSnap.data();
-        if (existingData.arr && Array.isArray(existingData.arr)) {
-            existingData.arr.forEach((item) => {
-                item.src = newSrc;
-            });
-            try {
-                await updateDoc(docRef, existingData);
-                console.log("Document updated successfully!");
-            } catch (error) {
-                console.error("Error updating document: ", error);
-            }
-        } else {
-            console.log("The 'arr' field is not an array or does not exist.");
-        }
-    } else {
-        console.log("Document does not exist.");
-    }
+    const userBlogs = query(
+        collection(db, "blogs"),
+        where("userId", "==", userLocalUid.uid)
+    );
+    const querySnapshot = await getDocs(userBlogs);
+    const updatePromises = [];
+    querySnapshot.forEach((doc) => {
+        const docRef = doc.ref;
+        updatePromises.push(updateDoc(docRef, { src: newSrc }));
+    });
+    await Promise.all(updatePromises);
 };
 
 const inputFile = document.getElementById("imageInput");
@@ -148,8 +151,8 @@ inputFile.addEventListener("change", async (event) => {
     }
 });
 
-const updatePassBtn = document.getElementById("updatePassBtn");
-updatePassBtn.addEventListener("click", async () => {
+const updatePassForm = document.getElementById("updatePassForm");
+updatePassForm.addEventListener("submit", async () => {
     const oldPassword = document.getElementById("oldPass").value;
     const newPassword = document.getElementById("newPass").value;
     const repeatPassword = document.getElementById("RepeatPass").value;
@@ -170,16 +173,34 @@ updatePassBtn.addEventListener("click", async () => {
         console.error("Error updating password:", error.message);
     }
 });
+const togglePass = (event) => {
+    let eye = event.target;
+    let input = eye.previousElementSibling;
+    if (input.type == "password") {
+        input.type = "text";
+        eye.src = "../assets/invisible.svg";
+        eye.previousElementSibling.focus();
+    } else {
+        input.type = "password";
+        eye.src = "../assets/visible.svg";
+        eye.previousElementSibling.focus();
+    }
+};
+let passwordInput = document.querySelectorAll(
+    'input.form-input[type="password"]'
+);
+passwordInput.forEach((input) => {
+    input.nextElementSibling.addEventListener("click", togglePass);
+});
 
 const signOutButton = document.getElementById("header-right-logout");
 
 signOutButton.addEventListener("click", async () => {
     try {
         await signOut(auth);
+        localStorage.clear();
+        window.location.replace("../index.html");
         console.log("User signed out successfully.");
-        if (!uid) {
-            window.location.replace("../index.html");
-        }
     } catch (error) {
         console.error("Error signing out:", error.message);
     }

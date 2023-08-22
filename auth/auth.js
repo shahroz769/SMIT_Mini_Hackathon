@@ -1,33 +1,28 @@
-// LoginJS
-
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCtPWyKIRMJsfWsLmwwlsArGw9788eQ8Sg",
+    authDomain: "hackathonsmit-ba16c.firebaseapp.com",
+    projectId: "hackathonsmit-ba16c",
+    storageBucket: "hackathonsmit-ba16c.appspot.com",
+    messagingSenderId: "420550745532",
+    appId: "1:420550745532:web:772da6c2eb1e6442191fb9",
+};
+
 import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
 import {
     getFirestore,
     doc,
     setDoc,
     getDoc,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyCa5XSrvDvKFwWNLYzvkeJkd10BUthxRQY",
-    authDomain: "smit-mini-hackathon-a3fd4.firebaseapp.com",
-    projectId: "smit-mini-hackathon-a3fd4",
-    storageBucket: "smit-mini-hackathon-a3fd4.appspot.com",
-    messagingSenderId: "575523341335",
-    appId: "1:575523341335:web:870e575db4a604dd288852",
-};
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
@@ -66,11 +61,11 @@ const togglePass = (event) => {
     let input = eye.previousElementSibling;
     if (input.type == "password") {
         input.type = "text";
-        eye.src = "./assets/invisible.svg";
+        eye.src = "../assets/invisible.svg";
         eye.previousElementSibling.focus();
     } else {
         input.type = "password";
-        eye.src = "./assets/visible.svg";
+        eye.src = "../assets/visible.svg";
         eye.previousElementSibling.focus();
     }
 };
@@ -98,7 +93,6 @@ form.addEventListener("submit", async function (event) {
         return;
     }
     newPassMatchError.classList.add("v-hidden");
-
     try {
         const userCredential = await createUserWithEmailAndPassword(
             auth,
@@ -111,7 +105,7 @@ form.addEventListener("submit", async function (event) {
             lastName: newLastName.value,
             fullName: newFirstName.value + " " + newLastName.value,
             joined: currentDate,
-            src: "https://static.thenounproject.com/png/4035889-200.png",
+            src: "https://firebasestorage.googleapis.com/v0/b/hackathonsmit-ba16c.appspot.com/o/defaultImage%2Fprofile.svg?alt=media&token=6792b586-b985-4441-ad7b-0be57f65f9a5",
         });
         console.log(user);
         newFirstName.value = "";
@@ -119,11 +113,20 @@ form.addEventListener("submit", async function (event) {
         newEmail.value = "";
         newPassword.value = "";
         newConfirmPassword.value = "";
-        window.location.replace("./dashboard.html");
         const docRef = doc(db, "users", user.uid);
         const userdocSnap = await getDoc(docRef);
         const userData = userdocSnap.data();
-        localStorage.setItem("userDb", JSON.stringify(userData));
+        await onAuthStateChanged(auth, (user) => {
+            if (user) {
+                localStorage.setItem("userDb", JSON.stringify(userData));
+                localStorage.setItem("user", JSON.stringify(user));
+                const uid = user.uid;
+                console.log("Uid ==>", uid);
+            } else {
+                console.log("User Signed Out");
+            }
+        });
+        window.location.replace("../dashboard/dashboard.html");
     } catch (error) {
         console.log(error.code);
         if (error.code === "auth/email-already-in-use") {
@@ -146,10 +149,21 @@ const loginUser = async () => {
             const userdocSnap = await getDoc(docRef);
             if (userdocSnap.exists()) {
                 const userData = userdocSnap.data();
-                localStorage.setItem("userDb", JSON.stringify(userData));
+                await onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        localStorage.setItem(
+                            "userDb",
+                            JSON.stringify(userData)
+                        );
+                        localStorage.setItem("user", JSON.stringify(user));
+                        const uid = user.uid;
+                        console.log("Uid ==>", uid);
+                    } else {
+                        console.log("User Signed Out");
+                    }
+                });
+                window.location.replace("../dashboard/dashboard.html");
             }
-            // Redirect to dashboard.html after successful login
-            window.location.replace("./dashboard.html");
         })
         .catch((error) => {
             invalidUser.classList.remove("v-hidden");
@@ -162,15 +176,3 @@ const loginUser = async () => {
 
 let signInForm = document.getElementById("signInForm");
 signInForm.addEventListener("submit", loginUser);
-//End of Login
-
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // https://firebase.google.com/docs/reference/js/auth.user
-        localStorage.setItem("user", JSON.stringify(user));
-        const uid = user.uid;
-        console.log("Uid ==>", uid);
-    } else {
-        console.log("User Signed Out");
-    }
-});

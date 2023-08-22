@@ -5,33 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Blogging App</title>
-
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 
 <body>
+    <div id="loader" class="spinner-bg">
+        <div class="spinner"></div>
+    </div>
     <div class="header-parent">
         <div class="header">
             <div class="header-left">
                 <h2>Personal Blogging App</h2>
             </div>
             <div class="header-right">
-                <p id="userName">Inzamam Malik</p>
-                <p id="header-right-login"><a href="./allblogs.html">All Blogs</a></p>
-                <p id="header-right-login">Login</p>
+                <a href="../Profile/profileChange.html" id="userName"></a>
+                <a href="../dashboard/dashboard.html" id="header-right-dashboard">Dashboard</a>
+                <a href="../all-blogs/allblogs.html" id="header-right-all">All Blogs</a>
+                <a href="../auth/auth.html" id="header-right-login">Login</a>
                 <p id="header-right-logout">Logout</p>
             </div>
         </div>
     </div>
     <div class="dashboard-parent">
         <div class="dashboard">
-            <h1>< Back to all blogs</h1>
+            <h1 id="backToAllBtn" class="back-btn"><span class="back-arrow"><img src="../assets/backArrow.svg" alt="back"></span> Back to all blogs</h1>
         </div>
     </div>
-
     <div class="all-blogs-from-user-parent">
         <div class="all-blogs-from-user">
             <h2 id="allBlogsHeading">All Blogs</h2>
+
+            <!-- <div class="from-user-parent"> -->
+                <div class="from-user">
+                    <div class="from-user-img">
+                        <img id="allFromUserImg" src="" alt="profile">
+                    </div>
+                    <h2 id="allFromUserFullName" class="from-user-name">Full Name</h2>
+                    <h5 id="allFromUserCount" class="from-user-count"></h5>
+                </div>
+            <!-- </div> -->
+
             <div class="all-blogs-from-user-child">
 
                 <!-- <div class="all-blogs-from-user-blog">
@@ -56,12 +69,11 @@
                             side.</p>
                     </div>
                 </div> -->
-                
+
             </div>
         </div>
     </div>
-
-    <script src="./app.js" type="module"></script>
+    <script src="./allfromuser.js" type="module"></script>
 </body>
 
 </html>

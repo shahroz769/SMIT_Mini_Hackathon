@@ -6,20 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Blogging App</title>
 
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 
 <body>
+    <div id="loader" class="spinner-bg">
+        <div class="spinner"></div>
+    </div>
     <div id="edit-window" class="w-bg">
         <div class="w">
             <h2>Edit Blog</h2>
             <input id="editTitle" type="text" placeholder="Blog title" required minlength="5" maxlength="50" />
             <textarea id="editBlog" type="text" placeholder="What is in your mind" required minlength="100"
                 maxlength="3000"></textarea>
-                <div>
-                    <button class="save-btn">Save</button>
-                    <button class="cancel-btn">Cancel</button>
-                </div>
+            <div class="editing-btn">
+                <button class="save-btn">Save</button>
+                <button class="cancel-btn">Cancel</button>
+            </div>
         </div>
     </div>
     <div class="header-parent">
@@ -28,9 +31,10 @@
                 <h2>Personal Blogging App</h2>
             </div>
             <div class="header-right">
-                <a href="Profile/profileChange.html" id="userName"></a>
-                <p id="header-right-login"><a href="./allblogs.html">All Blogs</a></p>
-                <p id="header-right-login">Login</p>
+                <a href="../Profile/profileChange.html" id="userName"></a>
+                <!-- <a href="../dashboard/dashboard.html" id="header-right-dashboard">Dashboard</a> -->
+                <a href="../all-blogs/allblogs.html" id="header-right-all">All Blogs</a>
+                <a href="../auth/auth.html" id="header-right-login">Login</a>
                 <p id="header-right-logout">Logout</p>
             </div>
         </div>
@@ -115,7 +119,8 @@
             </div>
         </div>
     </div>
-    <script src="./app.js" type="module"></script>
+    <script src="./dashboard.js" type="module">
+    </script>
 </body>
 
 </html>
